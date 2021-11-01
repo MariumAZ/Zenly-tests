@@ -32,13 +32,11 @@ var cfgFile string
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
   Use:   "Go-store",
-  Short: "A brief description of your application",
-  Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+  Short: "Go in store application",
+  Long: `                    -------------------------------------------------------------------------------------------
+                             An in-memory key valaue store accessible from the network, with grpc and in the Go language. 
+                             The client should be able to get, set string keys values in the memory of the server .
+                             ------------------------------------------------------------------------------------------- `,
   // Uncomment the following line if your bare application
   // has an action associated with it:
   //	Run: func(cmd *cobra.Command, args []string) { },
