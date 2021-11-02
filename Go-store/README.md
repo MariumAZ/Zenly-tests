@@ -5,5 +5,12 @@ The first step when working with Protocol Buffers is to define the structure for
 
 protoc-gen-go needs to be in your shell path, i.e. one of the directories listed in the PATH environment variable, which is different from the Go path. You can test this by simply typing protoc-gen-go at the command line: If it says "command not found" (or similar) then it's not in your PATH.
 
+```bash
 export PATH=$PATH:$(go env GOPATH)/bin
+```
+
+The command used to gerate gopher.pb.go is : 
+
+```bash
 protoc -I=. --go_out=. ./gopher.proto 
+```
