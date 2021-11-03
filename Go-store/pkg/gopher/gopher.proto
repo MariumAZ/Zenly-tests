@@ -10,17 +10,30 @@ option go_package = ".";
 
 // The gopher service definition.
 service Gopher {
-    // Get Gopher URL
-    rpc GetGopher (GopherRequest) returns (GopherReply) {}
+  // create
+    rpc CreateQuery (GopherRequest) returns (GopherReply) {}
+  // update
+    rpc UpdateQuery(GopherRequest) returns (GopherReply) {}
+  // GET   
+    rpc GetQuery(GopherRequest) returns (GopherReply) {}
   }
   
+  //Define query 
+  message Query{
+    string id = 1;
+    string city = 2;
+    string area = 3;
+  }
+
   // The request message containing the user's name.
   message GopherRequest {
-    string name = 1;
+    Query query = 1;
     
   }
-  
+
   // The response message containing the greetings
   message GopherReply {
-    string message = 1;
+    Query query = 1;
+    bool created = 2;
+    bool updated = 3;
   }
