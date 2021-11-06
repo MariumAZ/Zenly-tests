@@ -1,34 +1,47 @@
 package main
 
 import (
-    "fmt"
-    ntp "github.com/beevik/ntp"
-	_"context"
+	"context"
+	"fmt"
+	"net"
+	"log"
+	"google.golang.org/grpc"
 	pb "github.com/MariumAZ/Zenly-tests/tree/main/NTP-server/time"
-
+	ntp "github.com/beevik/ntp"
 )
 
-// define the server struct that will implement the server 
+const (
+	port = ":50051"
+)
+
+// define the server struct that will implement the server
 type Server struct {
 	pb.UnimplementedTimeServer
 }
-/*
+
 func (s *Server) GetTime(ctx context.Context, req *pb.TimeRequest) (*pb.TimeReply){
 	// connect to a remote ntp server 
-	time, err := ntp.Time("0.beevik-ntp.pool.ntp.org")
-
-	
-	// check if ntp server is missing
-	if req.Ntpserver == "" {
+	ntpserver := req.Ntpserver 
+	if  ntpserver == "" {
 		fmt.Println("ntpserver name must not be empty in the request")		
 	}
-	
-
+	log.Printf("Received: %v", ntpserver)
+	time, _ := ntp.Time(ntpserver)
+	timestamp := time.Unix()
+    return &pb.TimeReply{Timestamp : timestamp}
 	}
 
-*/
+
 func main() {
-	//time, _:= ntp.Time("0.beevik-ntp.pool.ntp.org")
-	time, _ := ntp.Time("time.microsoft.com")
-	fmt.Println(time)
+	lis, err := net.Listen("tcp", port)
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
+	// instantiate a new server
+	s := grpc.NewServer()
+	// register the new server
+	pb.RegisterTimeServer(s, &Server{})
+	if err := s.Serve(lis); err != nil {
+		log.Fatalf("failed to serve: %v", err)
+	}
 }
