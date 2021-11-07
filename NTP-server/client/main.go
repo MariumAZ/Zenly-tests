@@ -2,46 +2,37 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"net"
 	"log"
+	"os"
+	"time"
 	"google.golang.org/grpc"
 	pb "github.com/MariumAZ/Zenly-tests/tree/main/NTP-server/time"
-	ntp "github.com/beevik/ntp"
+	//ntp "github.com/beevik/ntp"
 )
 
 const (
-	port = ":50051"
+	address     = "localhost:50051"
+	defaultName = "time.apple.com"
 )
 
-// define the server struct that will implement the server
-type Server struct {
-	pb.UnimplementedTimeServer
-}
-
-func (s *Server) GetTime(ctx context.Context, req *pb.TimeRequest) (*pb.TimeReply){
-	// connect to a remote ntp server 
-	ntpserver := req.Ntpserver 
-	if  ntpserver == "" {
-		fmt.Println("ntpserver name must not be empty in the request")		
-	}
-	log.Printf("Received: %v", ntpserver)
-	time, _ := ntp.Time(ntpserver)
-	timestamp := time.Unix()
-    return &pb.TimeReply{Timestamp : timestamp}
-	}
-
-
 func main() {
-	lis, err := net.Listen("tcp", port)
+    // set up a connection to the server 
+	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		log.Fatalf("did not connect : %v", err)
 	}
-	// instantiate a new server
-	s := grpc.NewServer()
-	// register the new server
-	pb.RegisterTimeServer(s, &Server{})
-	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
+	defer conn.Close()
+	c := pb.NewTimeClient(conn)
+	// contact the server and print its response
+	name := defaultName
+	if len(os.Args) > 1 {
+		name = os.Args[1]
 	}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	r, err := c.GetTime(ctx, &pb.TimeRequest{Ntpserver: name})
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
+	log.Printf("Timestamp: %d", r.GetTimestamp())
 }
