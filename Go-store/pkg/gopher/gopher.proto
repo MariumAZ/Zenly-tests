@@ -1,8 +1,7 @@
 
 syntax = "proto3";
-package gopher;
-
-option go_package = ".";
+package  gopher;
+option go_package = "github.com/MariumAZ/Zenly-tests/tree/main/Go-store";
 
 //The gopher service definition.
 // server is used to implement gopher.GopherServer.
@@ -19,21 +18,21 @@ service Gopher {
   }
   
   //Define query 
-  message Query{
-    string id = 1;
-    string city = 2;
-    string area = 3;
-  }
+message Query{
+  string id = 1;
+  string city = 2;
+  string area = 3;
+}
 
-  // The request message containing the user's name.
-  message GopherRequest {
-    Query query = 1;
-    
-  }
+// The request message containing the user's name.
+message GopherRequest {
+  Query query = 1;
+  
+}
 
-  // The response message containing the greetings
-  message GopherReply {
-    Query query = 1;
-    bool created = 2;
-    bool updated = 3;
-  }
+// The response message containing the greetings
+message GopherReply {
+  Query query = 1;
+  bool created = 2;
+  bool updated = 3;
+}

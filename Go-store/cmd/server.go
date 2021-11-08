@@ -16,10 +16,31 @@ limitations under the License.
 package cmd
 
 import (
+	"context"
 	"fmt"
+	"log"
+	"net"
 
+	pb "github.com/MariumAZ/Zenly-tests/tree/main/Go-store/pkg/gopher"
 	"github.com/spf13/cobra"
+	"google.golang.org/grpc"
 )
+const (
+    port = ":9000"
+)
+
+
+// server is used to implement gopher.GopherServer.
+
+type GopherServer struct {
+    //CreateQuery(ctx context.Context, req *pb.GopherRequest)(*pb.GopherReply, error)
+	//GetQuery(ctx context.Context, req *pb.GopherRequest)(*pb.GopherReply, error)
+	//UpdateQuery(ctx context.Context, req *pb.GopherRequest)(*pb.GopherReply, error)
+}
+
+type Gopher struct {
+    URL string `json: "url"`
+}
 
 // serverCmd represents the server command
 var serverCmd = &cobra.Command{
@@ -33,8 +54,44 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("server called")
+		lis, err := net.Listen("tcp", port)
+		if err != nil {
+			log.Fatalf("failed to listen %v", err)
+		}
+		// Create new gRPC server with (blank) options
+		grpcServer := grpc.NewServer()
+		// Create BlogService type 
+		srv := &GopherServer{}
+		pb.RegisterGopherServer(grpcServer, srv)
+		log.Printf("GRPC server listening on %v", lis.Addr())
+		if err := grpcServer.Serve(lis); err != nil {
+            log.Fatalf("failed to serve: %v", err)
+        }
 	},
 }
+
+
+// implements set query 
+func (s *GopherServer) CreateQuery (ctx context.Context, req *pb.GopherRequest)(*pb.GopherReply, error){  
+	res := &pb.GopherReply{}
+	if req == nil {
+        fmt.Println("request must not be nil")
+        return res, xerrors.Errorf("request must not be nil")
+    }
+
+    if req.Name == "" {
+        fmt.Println("name must not be empty in the request")
+        return res, xerrors.Errorf("name must not be empty in the request")
+    }
+} 
+
+
+//implements get query 
+func (s *GopherServer) GetQuery (ctx context.Context, req *pb.GopherRequest)(*pb.GopherReply, error){
+		
+}
+
+
 
 func init() {
 	rootCmd.AddCommand(serverCmd)
@@ -48,4 +105,6 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// serverCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+    
+    
 }
