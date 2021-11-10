@@ -14,3 +14,6 @@ Network Time Protocol (NTP) is a protocol used to synchronize computer clock tim
 
 
 ![](clock.png)
+
+
+To automate our tasks we will make use if TaskFile

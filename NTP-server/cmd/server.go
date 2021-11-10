@@ -23,7 +23,6 @@ import (
 
 	pb "github.com/MariumAZ/Zenly-tests/tree/main/NTP-server/time"
 	ntp "github.com/beevik/ntp"
-	"github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 )
@@ -50,7 +49,6 @@ var serverCmd = &cobra.Command{
 	},
 }
 
-
 const (
 	port = ":50051"
 )
@@ -69,7 +67,7 @@ func (s *Server) GetTime(ctx context.Context, req *pb.TimeRequest) (*pb.TimeRepl
 	log.Printf("Received: %v", ntpserver)
 	time, error := ntp.Time(ntpserver)
 	if error != nil {
-		log.Fatalf("Failed %v : ", error)
+		log.Fatalf(" %v : ", error)
 	
 	}
 	timestamp := time.Unix()
